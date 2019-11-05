@@ -88,6 +88,16 @@ container > canvas {
     align-self: end;
 }
 
-canvas {
+#preview {
     border: 5px solid white;
+}
+
+.glsl-canvas {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }

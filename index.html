@@ -11,37 +11,52 @@
 </head>
 
 <body>
+    <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas>
     <header>
         <h1>Contrast</h1>
         <h2>Codevember 2019</h2>
         <h3>@mcx_sic</h3>
     </header>
     <container>
-        <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas>
+        <canvas id="preview"></canvas>
     </container>
     <div class="controls">
-        <a href="#" class="button" id="download" download="test.png">Download</a>
+        <a href="#" class="button" id="download" download="wallpaper.png">Download</a>
     </div>
 </body>
 <script>
+    const WIDTH = 1080;
+    const HEIGHT = 2220;
+
+    // Actual Canvas
     const canvas = document.querySelector('.glsl-canvas');
-    canvas.getContext('webgl', { preserveDrawingBuffer: true });
-    canvas.width = 1080;
-    canvas.height = 2220;
+    // Hack to fix glsl-canvas where it uses
+    // clientWidth and clientHeight instead of the set width and height....
+    canvas.style.width = WIDTH / this.devicePixelRatio;
+    canvas.style.height = HEIGHT / this.devicePixelRatio;
+
+    const glsl = GlslCanvas.of(canvas);
+    glsl.setUniforms({});
+    glsl.on('render', function () {
+        if (ctx != null) {
+            ctx.drawImage(canvas, 0, 0);
+        }
+    });
+    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+
+    // preview canvas
+    const preview = document.getElementById('preview');
+    preview.width = WIDTH;
+    preview.height = HEIGHT;
+    const ctx = preview.getContext('2d');
+
+    // download button
     const download = document.getElementById('download');
     download.addEventListener('click', e => {
         const image = canvas.toDataURL("image/png");
         download.setAttribute("href", image);
-        console.log(image);
+    });
 
-        // document.write('<img src="' + img + '"/>');
-        // e.preventDefault();
-    });
-    const glsl = GlslCanvas.of(canvas);
-    glsl.setUniforms({});
-    glsl.on('render', function () {
-    });
-    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
 </script>
 
 </html>
