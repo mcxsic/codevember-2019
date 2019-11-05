@@ -11,55 +11,141 @@
 </head>
 
 <body>
-    <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas>
-    <container>
-        <header>
-            <h1>Contrast</h1>
-            <h2>Codevember 2019</h2>
-            <a href="https://twitter.com/mcx_sic"><h3>@mcx_sic</h3></a>
-        </header>
-        <preview>
-            <canvas id="preview"></canvas>
-        </preview>
-        <div class="controls">
-            <a href="#" class="button" id="download" download="wallpaper.png">Download</a>
+    <!-- <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas> -->
+    <div class="container center">
+        <div class="header">
+            <h1 class="title main-color"></h1>
+            <h2 class="secondary-color">Codevember 2019</h2>
+            <a class="secondary-color" href="https://twitter.com/mcx_sic">
+                <h3 class="secondary-color">@mcx_sic</h3>
+            </a>
         </div>
-    </container>
+        <div class="preview-container">
+            <canvas id="preview-canvas"></canvas>
+        </div>
+        <div class="controls">
+            <a href="#" class="main-color" id="source">Source</a>
+            <a href="#" class="main-color" id="download" download="capture.png">Capture</a>
+        </div>
+    </div>
 
 </body>
 <script>
-    const WIDTH = 1080;
-    const HEIGHT = 2220;
+    // Get hash
+    const hash = window.location.hash.substr(1);
+    console.log(decodeURIComponent(hash), hash.length);
 
-    // Actual Canvas
-    const canvas = document.querySelector('.glsl-canvas');
-    // Hack to fix glsl-canvas where it uses
-    // clientWidth and clientHeight instead of the set width and height....
-    canvas.style.width = WIDTH / this.devicePixelRatio;
-    canvas.style.height = HEIGHT / this.devicePixelRatio;
-
-    const glsl = GlslCanvas.of(canvas);
-    glsl.setUniforms({});
-    glsl.on('render', function () {
-        if (ctx != null) {
-            ctx.drawImage(canvas, 0, 0);
+    async function getConfig() {
+        if (hash.length < 1) {
+            return null;
         }
+        let config;
+        try {
+            config = await import(`./configs/${hash}.js`);
+            config = config.default;
+            console.log(config);
+        } catch (e) {
+            console.error('module not found!');
+            return null;
+        }
+
+        return {
+            width: config.width || 1080,
+            height: config.height || 2220,
+            frameColor: config.frameColor || 'white',
+            mainColor: config.mainColor || '#efefef',
+            secondaryColor: config.secondaryColor || '#a0a0a0',
+            backgroundColor: config.backgroundColor || '#101010',
+            title: config.title || '',
+            source: config.source || 'https://github.com/mcxsic/codevember-2019'
+        };
+    }
+
+    async function setCanvas(config) {
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        canvas.classList.add('glsl-canvas');
+        canvas.setAttribute("data-fragment-url", `shaders/${hash}.glsl`);
+        document.body.appendChild(canvas);
+
+        // Actual Canvas
+        // Hack to fix glsl-canvas where it uses
+        // clientWidth and clientHeight instead of the set width and height....
+        canvas.style.width = config.width / this.devicePixelRatio;
+        canvas.style.height = config.height / this.devicePixelRatio;
+        return canvas;
+    }
+
+    function createError() {
+        const error = document.createElement('h1');
+        error.textContent = "Error 404";
+        error.classList.add('main-color');
+        error.classList.add('center');
+        error.style.textAlign = 'center';
+        document.body.removeChild(document.body.children[0]);
+        document.body.appendChild(error);
+    }
+
+    async function initVisualization() {
+        const config = await getConfig();
+        if (config == null) {
+            createError();
+            document.body.style.opacity = 1;
+            return;
+        }
+
+        const canvas = await setCanvas(config);
+        const glsl = GlslCanvas.of(canvas);
+        glsl.setUniforms({});
+        glsl.on('render', function () {
+            if (ctx != null) {
+                ctx.drawImage(canvas, 0, 0);
+            }
+        });
+        glsl.on('load', function () {
+            document.body.style.opacity = 1;
+        });
+        var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+
+        // preview canvas
+        const preview = document.getElementById('preview-canvas');
+        preview.width = config.width;
+        preview.height = config.height;
+        const ctx = preview.getContext('2d');
+
+        // download button
+        const download = document.getElementById('download');
+        download.addEventListener('click', e => {
+            const image = canvas.toDataURL("image/png");
+            download.setAttribute("href", image);
+        });
+
+        // Update colors
+        preview.style.borderColor = config.frameColor;
+
+        const mainColor = document.querySelectorAll('.main-color');
+        mainColor.forEach(element => {
+            element.style.color = config.mainColor;
+        });
+        const secondaryColor = document.querySelectorAll('.secondary-color');
+        secondaryColor.forEach(element => {
+            element.style.color = config.secondaryColor;
+        });
+        document.body.style.backgroundColor = config.backgroundColor;
+
+        // Update title
+        const title = document.querySelector('h1.title');
+        title.textContent = config.title;
+        document.title = `${config.title} | Codevember 2019`
+
+        // Update source link
+        document.getElementById('source').setAttribute('href', config.source);
+    }
+
+    window.addEventListener('load', initVisualization);
+    window.addEventListener('hashchange', e => {
+        window.location.reload();
     });
-    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
-
-    // preview canvas
-    const preview = document.getElementById('preview');
-    preview.width = WIDTH;
-    preview.height = HEIGHT;
-    const ctx = preview.getContext('2d');
-
-    // download button
-    const download = document.getElementById('download');
-    download.addEventListener('click', e => {
-        const image = canvas.toDataURL("image/png");
-        download.setAttribute("href", image);
-    });
-
 </script>
 
 </html>

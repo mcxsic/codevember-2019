@@ -17,13 +17,21 @@ body {
 }
 body {
     padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s 0.1s ease-out;
 }
 
+.main-color {
+    color: #efefef;
+}
+
+.secondary-color {
+    color: #a0a0a0;
+}
 h1,
 h2,
 h3 {
     font-weight: 400;
-    color: #a0a0a0;
     letter-spacing: 0.2em;
     margin-right: -0.2em;
     text-transform: uppercase;
@@ -31,11 +39,11 @@ h3 {
 }
 
 h1 {
-    margin-top: -0.6em;
+    margin-top: -0.3em;
     font-size: 3em;
     letter-spacing: 0.3em;
     margin-right: -0.3em;
-    color: #efefef;
+    line-height: 1.4em;
 }
 
 h2 {
@@ -43,7 +51,6 @@ h2 {
 }
 
 a {
-    color: #efefef;
     letter-spacing: 0.2em;
     font-size: 2em;
     text-transform: uppercase;
@@ -54,7 +61,7 @@ a:hover {
     text-decoration: underline;
 }
 
-header {
+.header {
     position: absolute;
     top: 0;
     left: 0;
@@ -62,23 +69,26 @@ header {
     text-align: right;
 }
 
-container {
+.container {
+    flex-flow: row nowrap;
+    justify-content: space-around;
+}
+
+.center {
     position: absolute;
     display: block;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    flex-flow: row nowrap;
-    justify-content: space-around;
 }
 
-preview {
+.preview-container {
     position: relative;
     display: block;
     text-align: center;
 }
 
-#preview {
+#preview-canvas {
     position: relative;
     width: 35vh;
     border: 5px solid white;
@@ -102,9 +112,14 @@ preview {
     z-index: -1;
 }
 
+#source {
+    margin-bottom: 10px;
+    display: block;
+}
+
 /* Minimum aspect ratio */
 @media (max-aspect-ratio: 6/5) {
-    header {
+    .header {
         position: relative;
         transform: none;
         text-align: center;
@@ -123,25 +138,12 @@ preview {
         height: auto;
     }
 
-    #preview {
+    #preview-canvas {
         width: 30vh;
     }
 
-    h1,
-    h2,
-    h3 {
-        letter-spacing: 0.2em;
-        margin-right: -0.2em;
-
-        line-height: 2em;
-    }
-
     h1 {
-        margin-top: -0.6em;
         font-size: 1.8em;
-        letter-spacing: 0.3em;
-        margin-right: -0.3em;
-        color: #efefef;
     }
 
     h2 {
@@ -149,10 +151,6 @@ preview {
     }
 
     a {
-        color: #efefef;
-        letter-spacing: 0.2em;
         font-size: 1.2em;
-        text-transform: uppercase;
-        text-decoration: none;
     }
 }
