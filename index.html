@@ -12,17 +12,20 @@
 
 <body>
     <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas>
-    <header>
-        <h1>Contrast</h1>
-        <h2>Codevember 2019</h2>
-        <h3>@mcx_sic</h3>
-    </header>
     <container>
-        <canvas id="preview"></canvas>
+        <header>
+            <h1>Contrast</h1>
+            <h2>Codevember 2019</h2>
+            <a href="https://twitter.com/mcx_sic"><h3>@mcx_sic</h3></a>
+        </header>
+        <preview>
+            <canvas id="preview"></canvas>
+        </preview>
+        <div class="controls">
+            <a href="#" class="button" id="download" download="wallpaper.png">Download</a>
+        </div>
     </container>
-    <div class="controls">
-        <a href="#" class="button" id="download" download="wallpaper.png">Download</a>
-    </div>
+
 </body>
 <script>
     const WIDTH = 1080;
