@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <title>Codevember 2019</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <link type="text/css" href="/css/styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="/third_party/glsl-canvas.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Contrast</h1>
+        <h2>Codevember 2019</h2>
+        <h3>@mcx_sic</h3>
+    </header>
+    <container>
+        <canvas class="glsl-canvas" data-fragment-url="shaders/fragment.glsl"></canvas>
+    </container>
+    <div class="controls">
+        <a href="#" class="button" id="download" download="test.png">Download</a>
+    </div>
+</body>
+<script>
+    const canvas = document.querySelector('.glsl-canvas');
+    canvas.getContext('webgl', { preserveDrawingBuffer: true });
+    canvas.width = 1080;
+    canvas.height = 2220;
+    const download = document.getElementById('download');
+    download.addEventListener('click', e => {
+        const image = canvas.toDataURL("image/png");
+        download.setAttribute("href", image);
+        console.log(image);
+
+        // document.write('<img src="' + img + '"/>');
+        // e.preventDefault();
+    });
+    const glsl = GlslCanvas.of(canvas);
+    glsl.setUniforms({});
+    glsl.on('render', function () {
+    });
+    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+</script>
+
+</html>

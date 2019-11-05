@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    padding: 20px;
+    background-color: #101010;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-column-gap: 15px;
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 400;
+    color: #a0a0a0;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 2em;
+}
+
+h1 {
+    font-size: 3em;
+    letter-spacing: 0.3em;
+    color: #efefef;
+}
+
+h2 {
+    font-size: 1em;
+}
+
+a {
+    color: #efefef;
+    letter-spacing: 0.2em;
+    font-size: 2em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+header {
+    justify-self: center;
+    align-self: start;
+    text-align: right;
+    grid-column: 1;
+    grid-row: 2;
+}
+
+container {
+    width: 35vh;
+    justify-self: center;
+    align-self: center;
+    position: relative;
+    display: block;
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 2;
+}
+container::before {
+    content: '';
+    display: block;
+    width: 100%;
+    padding-top: 205.555%;
+}
+
+container > canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.controls {
+    grid-column: 3;
+    grid-row: 3;
+    justify-self: center;
+    align-self: end;
+}
+
+canvas {
+    border: 5px solid white;
+}

@@ -1,0 +1,21 @@
+{
+    "name": "codevember-2019",
+    "version": "1.0.0",
+    "description": "A repository where I explore how to create wallpapers for Pixel 3a device using only fragment shaders.",
+    "scripts": {
+        "start": "live-server"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mcxsic/codevember-2019.git"
+    },
+    "author": "mcxsic",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mcxsic/codevember-2019/issues"
+    },
+    "homepage": "https://github.com/mcxsic/codevember-2019#readme",
+    "devDependencies": {
+        "live-server": "^1.2.1"
+    }
+}
