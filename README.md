@@ -4,7 +4,7 @@ A list of the Codevember 2019 WebGL experiments, using [glsl-canvas](https://git
 
 
 
-## Imposed Restrictions
+## Imposed Constraints
 
 - Only use fragment shader.
 - Compositions have to 'work' as a wallpaper.
