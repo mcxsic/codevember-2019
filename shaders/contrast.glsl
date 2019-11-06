@@ -13,18 +13,7 @@ uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
-float pseudoRandom(float x) {
-    float amplitude = 1.0;
-    float frequency = 1.720;
-    float y = sin(x * frequency);
-    float t = 0.01 * (-u_time * 130.0);
-    y += sin(x * frequency * 2.1 + t) * 4.5;
-    y += sin(x * frequency * 1.72 + t*1.121) * 4.0;
-    y += sin(x * frequency * 2.221 + t*0.437) * 5.0;
-    y += sin(x * frequency * 3.1122 + t*4.269) * 2.5;
-    return y;
-}
-
+// The Book Of Shaders implementation (https://thebookofshaders.com/11/)
 float random(vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
