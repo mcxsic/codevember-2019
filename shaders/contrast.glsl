@@ -5,22 +5,6 @@
 precision mediump float;
 #endif
 
-/* Color palette */
-#define BLACK vec3(0.0, 0.0, 0.0)
-#define WHITE vec3(1.0, 1.0, 1.0)
-#define RED vec3(1.0, 0.0, 0.0)
-#define GREEN vec3(0.0, 1.0, 0.0)
-#define BLUE vec3(0.0, 0.0, 1.0)
-#define YELLOW vec3(1.0, 1.0, 0.0)
-#define CYAN vec3(0.0, 1.0, 1.0)
-#define MAGENTA vec3(1.0, 0.0, 1.0)
-#define ORANGE vec3(1.0, 0.5, 0.0)
-#define PURPLE vec3(1.0, 0.0, 0.5)
-#define LIME vec3(0.5, 1.0, 0.0)
-#define ACQUA vec3(0.0, 1.0, 0.5)
-#define VIOLET vec3(0.5, 0.0, 1.0)
-#define AZUR vec3(0.0, 0.5, 1.0)
-
 #define COLOR_1 vec3(0.0, 68.0 / 255.0, 1.0)
 #define COLOR_2 vec3(1.0, 223.0 / 255.0, 0.0)
 #define COLOR_3 COLOR_1 * 0.9
@@ -62,7 +46,7 @@ float linearGradient(vec2 st, vec2 start, vec2 end, vec3 color1, vec3 color2) {
 }
 
 vec4 gradient(vec2 st, vec4 color1, vec4 color2, float slope, float scale, float dist) {
-    return mix(color1, color2, clamp((st.x + dist) * scale * slope + (st.y + dist) * scale * (1.0 - slope), 0., 1.));
+    return mix(color1, color2, clamp((st.x + dist) * scale * slope + (st.y + dist) * scale * (1.0 - slope), 0.0, 1.0));
 }
 
 void main() {
@@ -70,11 +54,11 @@ void main() {
     float mask1 = circle(st, vec2(-2.3, 0.3), 2.7);
     vec3 color2 = mix(COLOR_2, COLOR_3, 0.5 * (1.0 + sin(u_time)));
     vec3 color = COLOR_1;
-    color = mix(color, vec3(gradient(st - random(st) * 0.04, vec4(COLOR_1, 1.0), vec4(color2, 1.0), 0.5, 1.2, 0.1)), mask1);
+    vec4 circle1 = gradient(st - random(st) * 0.04, vec4(COLOR_1, 1.0), vec4(color2, 1.0), 0.5, 1.2, 0.1);
+    color = mix(color, circle1.rgb, mask1 * circle1.a);
 
     float mask2 = circle(st, vec2(2.4, - 1.4), 3.0);
-    color = mix(color, vec3(gradient(st + random(st + 0.342) * 0.06, vec4(color2, 1.0), vec4(COLOR_1, 1.0), 0.3, 0.5, 2.0)), mask2);
-
-    // color = vec3(st.x, cos(u_time), abs(sin(u_time)));
+    vec4 circle2 = gradient(st + random(st + 0.342) * 0.06, vec4(color2, 1.0), vec4(COLOR_1, 1.0), 0.3, 0.5, 2.0);
+    color = mix(color, circle2.rgb, mask2 * circle2.a);
     gl_FragColor = vec4(color, 1.0);
 }

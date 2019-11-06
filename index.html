@@ -33,7 +33,6 @@
 <script>
     // Get hash
     const hash = window.location.hash.substr(1);
-    console.log(decodeURIComponent(hash), hash.length);
 
     async function getConfig() {
         if (hash.length < 1) {
@@ -43,7 +42,6 @@
         try {
             config = await import(`./configs/${hash}.js`);
             config = config.default;
-            console.log(config);
         } catch (e) {
             console.error('module not found!');
             return null;
