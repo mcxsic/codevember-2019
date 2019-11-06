@@ -93,7 +93,7 @@
             document.body.style.opacity = 1;
             return;
         }
-
+        let captureRequested = false;
         const canvas = await setCanvas(config);
         const glsl = GlslCanvas.of(canvas);
         glsl.setUniforms({});
@@ -116,8 +116,27 @@
         // download button
         const download = document.getElementById('download');
         download.addEventListener('click', e => {
-            const image = canvas.toDataURL("image/png");
-            download.setAttribute("href", image);
+            if (captureRequested) {
+                requestAnimationFrame(() => {
+                    URL.revokeObjectURL(download.href);
+                    download.removeAttribute('href');
+                    captureRequested = false;
+                    download.textContent = "capture";
+                    glsl.play();
+                });
+            } else {
+                requestAnimationFrame(() => {
+                    glsl.pause();
+                    canvas.toBlob(function (blob) {
+                        const url = URL.createObjectURL(blob);
+                        download.setAttribute("href", url);
+                        captureRequested = true;
+                        download.textContent = "download";
+                    });
+                });
+
+                e.preventDefault();
+            }
         });
 
         // Update colors

@@ -1,4 +1,4 @@
 const settings = {
-    title: 'contrast test'
+    title: 'Contrast'
 };
 export default settings;
