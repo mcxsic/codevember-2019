@@ -30,10 +30,6 @@ float circle(vec2 st, vec2 center, float radius) {
     return 1.0 - smoothstep(radius - 0.002, radius + 0.002, distance(st, center));
 }
 
-float linearGradient(vec2 st, vec2 start, vec2 end, vec3 color1, vec3 color2) {
-    return 1.0;
-}
-
 vec4 gradient(vec2 st, vec4 color1, vec4 color2, float slope, float scale, float dist) {
     return mix(color1, color2, clamp((st.x + dist) * scale * slope + (st.y + dist) * scale * (1.0 - slope), 0.0, 1.0));
 }

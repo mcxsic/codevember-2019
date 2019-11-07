@@ -51,7 +51,7 @@
             width: config.width || 1080,
             height: config.height || 2220,
             frameColor: config.frameColor || 'white',
-            mainColor: config.mainColor || '#efefef',
+            primaryColor: config.primaryColor || '#efefef',
             secondaryColor: config.secondaryColor || '#a0a0a0',
             backgroundColor: config.backgroundColor || '#101010',
             title: config.title || '',
@@ -140,9 +140,9 @@
         // Update colors
         preview.style.borderColor = config.frameColor;
 
-        const mainColor = document.querySelectorAll('.main-color');
-        mainColor.forEach(element => {
-            element.style.color = config.mainColor;
+        const primaryColor = document.querySelectorAll('.main-color');
+        primaryColor.forEach(element => {
+            element.style.color = config.primaryColor;
         });
         const secondaryColor = document.querySelectorAll('.secondary-color');
         secondaryColor.forEach(element => {
