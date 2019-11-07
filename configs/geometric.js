@@ -5,6 +5,6 @@ const settings = {
     backgroundColor: '#392240',
     primaryColor: '#F2F1DC',
     secondaryColor: '#DB8B65',
-    frameColor: '#3D4073',
+    frameColor: '#4B72A6',
 };
 export default settings;
