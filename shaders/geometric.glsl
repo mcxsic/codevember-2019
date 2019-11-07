@@ -74,17 +74,17 @@ vec4 generateScene(vec2 st, vec2 center, float time) {
     float dist = 0.15;
 
     for(int i = 0; i < 8; i ++ ) {
-        stR = stC * rotate2d(time * random(vec2(float(i + 1) * 0.02)) + PI / 2.0);
+        stR = stC * rotate2d(time + PI / 2.0);
         color = drawShape(hexagon(stR, 0.06 + float(i) * dist * 3.0), vec4((COLOR_1).rgb, 0.5), color);
     }
 
     for(int i = 0; i < 8; i ++ ) {
-        stR = stC * rotate2d(time * float(i + 1) * 0.0432342 + PI / 2.0);
+        stR = stC * rotate2d(time * float(i + 1) * 0.1 + PI / 2.0);
         color = drawShape(hexagon(stR, 0.06 + dist + float(i) * dist * 3.0), vec4((COLOR_2).rgb, 0.5), color);
     }
 
     for(int i = 0; i < 6; i ++ ) {
-        stR = stC * rotate2d(time * float(i + 1) * 0.151234153 + PI / 2.0);
+        stR = stC * rotate2d(time * float(i + 1) * 0.2 + PI / 2.0);
         color = drawShape(hexagon(stR, 0.06 + dist * 2.0 + float(i) * dist * 3.0), vec4((COLOR_5).rgb, 0.79), color);
     }
 
@@ -96,10 +96,13 @@ void main() {
     vec2 stC = (st - CENTER_COMP);
     vec2 stR = stC * rotate2d(PI / 2.0);
 
-    vec4 color = generateScene(st, CENTER_COMP, u_time * 0.1);
+    vec4 color = generateScene(st, CENTER_COMP, u_time * 0.07);
     // color.rgb += color.a * 0.1 * (2.0 * random(st) -1.0);
     vec4 bgd = mix(COLOR_4, COLOR_5, gradient(hexSDF(stR), 0.2, 2.2));
 
     color = blend(color, 0.01 * (2.0 * random(st) - 1.0) + bgd);
     gl_FragColor = color;
+
+
+    // gl_FragColor = vec4(vec3(hexagon(st, 1.0 * cos(PI / 6.))),1.0);
 }
