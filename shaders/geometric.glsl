@@ -4,7 +4,9 @@
 #ifdef GL_ES
 precision mediump float;
 #endif
-#define PI 3.1416
+
+#define PI 3.14159265359
+
 #define COLOR_1 vec4(219.0 , 139.0, 101.0, 255.0) / 255.0
 #define COLOR_2 vec4(240.0, 233.0, 173.0, 255.0) / 255.0
 #define COLOR_3 vec4(75.0, 114.0, 166.0, 255.0) / 255.0
@@ -21,10 +23,6 @@ uniform float u_time;
 float stroke(float x, float s, float w) {
     float d = smoothstep(s - SMOOTH, s + SMOOTH, x + w * 0.5) - smoothstep(s - SMOOTH, s + SMOOTH, x - w * 0.5);
     return clamp(d, 0.0, 1.0);
-}
-
-float fill(float x, float size) {
-    return 1.0 - step(size, x);
 }
 
 float gradient(float x, float stop1, float stop2) {
@@ -55,10 +53,8 @@ float hexSDF(vec2 st) {
 
 float hexagon(vec2 st, float size) {
     return stroke(hexSDF(st), size, 0.02);
-    // return fill(hexSDF(st), size);
 }
 vec4 drawShape(float mask, vec4 src, vec4 dst) {
-    // src.a = 1.0;
     float srcAlpha = mask * src.a;
     return vec4(mix(dst.rgb, src.rgb, srcAlpha), srcAlpha + dst.a * (1.0 - srcAlpha));
 }
@@ -97,12 +93,8 @@ void main() {
     vec2 stR = stC * rotate2d(PI / 2.0);
 
     vec4 color = generateScene(st, CENTER_COMP, u_time * 0.07);
-    // color.rgb += color.a * 0.1 * (2.0 * random(st) -1.0);
     vec4 bgd = mix(COLOR_4, COLOR_5, gradient(hexSDF(stR), 0.2, 2.2));
 
     color = blend(color, 0.01 * (2.0 * random(st) - 1.0) + bgd);
     gl_FragColor = color;
-
-
-    // gl_FragColor = vec4(vec3(hexagon(st, 1.0 * cos(PI / 6.))),1.0);
 }
