@@ -10,8 +10,10 @@ precision mediump float;
 #define COLOR_1 vec4(20.0 , 26.0, 24.0, 255.0) / 255.0
 #define COLOR_2 vec4(241.0, 240.0, 239.0, 255.0) / 255.0
 #define COLOR_3 vec4(216.0, 2.0, 43.0, 255.0) / 255.0
+#define COLOR_4 vec4(63.0, 10.0, 16.0, 255.0) / 255.0
+#define COLOR_5 vec4(214.0, 213.0, 212.0, 255.0) / 255.0
 #define CENTER vec2(0.0, 0.0)
-#define CENTER_COMP vec2(0.0, 1.7)
+#define CENTER_COMP vec2(0.0, 1.4)
 #define SMOOTH 0.002
 
 uniform vec2 u_resolution;
@@ -50,12 +52,13 @@ float triSDF(vec2 st) {
 }
 
 float triangle(vec2 st, float size) {
-    return fill(triSDF(st), size);
+    float tr = triSDF(st);
+    return fill(tr, size) - fill(tr, size * 0.5);
 }
 
 vec4 color(float mask, vec4 color) {
     float srcAlpha = mask * color.a;
-    return vec4(mix(vec3(0.0), color.rgb, srcAlpha), srcAlpha);
+    return vec4(color.rgb, srcAlpha);
 }
 
 vec4 blend(vec4 src, vec4 dst) {
@@ -66,12 +69,24 @@ vec4 generateScene(vec2 st, float time) {
     vec4 bgd = COLOR_1;
 
     float hLine = stroke(st.y, 0.0, 0.01);
-    vec4 shape = color(triangle(st, 0.8), COLOR_3);
+    float t = fract(time / 15.0);
+    vec4 shape = color(triangle(st, 20.0 * t * t * t * t), COLOR_3);
+    t = fract((time + 3.75) / 15.0);
+    vec4 shape2 = color(triangle(st, 20.0 * t * t * t * t), COLOR_2);
+    t = fract(max(time + 7.5, 0.0) / 15.0);
+    vec4 shape3 = color(triangle(st, 20.0 * t * t * t * t), COLOR_4);
+    t = fract(max(time + 11.25, 0.0) / 15.0);
+    vec4 shape4 = color(triangle(st, 20.0 * t * t * t * t), COLOR_5);
 
     vec4 color = blend(shape, bgd);
+    color = blend(shape2, color);
+    color = blend(shape3, color);
+    color = blend(shape4, color);
 
-    color.rgb = mix((COLOR_1).rgb, color.rgb, 1.0 - gradient(st.y, - 0.6, 0.0) + gradient(st.y, 0.0, 1.9));
-    color.rgb = mix(color.rgb, (COLOR_2).rgb, color.a * hLine), color.a * hLine;
+    color.rgb = mix((COLOR_1).rgb + 0.02 * random(st), color.rgb, 1.0 - gradient(st.y, - 0.9, 0.0) + 1. * gradient(st.y, 0.0, .9));
+    // color.rgb = mix((COLOR_1).rgb, color.rgb, 1. - step(0., st.y) + 0.4 * step(0., st.y));
+    // color.rgb = mix(color.rgb, (COLOR_2).rgb, color.a * hLine), color.a * hLine;
+    // color = blend(vec4((COLOR_2).rgb, 0.005*(1.-gradient(abs(st.y), 0.0, 0.1))), color);
 
     return color;
 }
@@ -79,8 +94,6 @@ vec4 generateScene(vec2 st, float time) {
 void main() {
     vec2 st = normalizedCoordinates(gl_FragCoord.xy, u_resolution);
     vec2 stC = (st - CENTER_COMP);
-
     vec4 color = generateScene(stC, u_time);
-    gl_FragColor.rgb = color.rgb;
-    gl_FragColor.a = 1.0;
+    gl_FragColor = color;
 }
