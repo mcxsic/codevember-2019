@@ -52,7 +52,6 @@ vec2 normalizedCoordinates(vec2 pixelCoord, vec2 resolution) {
 
 float wave(vec2 st, float size, float width) {
     return (1.0 - step(size * width, abs(st.x))) * strokeScl(-st.y, size * (1.0 + 0.1 * sin(PI * st.x * 2.0 / size)), 0.2);
-    // return stroke(sin(PI * st.x) * step(width, abs(st.x)), size, 0.1);
 }
 
 float triSDF(vec2 st) {
@@ -141,11 +140,6 @@ vec4 generateScene(vec2 st, float time, float noiseT) {
     gradient.a = 0.8 * mix(0.7, gradient.a, step(0.0, - (st.y)));
     color = blend(gradient, color);
     color = blend(h, color);
-    // color.rgb = mix(, color.rgb, 1.0 - gradient(st.y, - 0.9, 0.0) + 1.0 * gradient(st.y, 0.0, 0.9));
-    // color.rgb = mix((COLOR_1).rgb, color.rgb, 1. - step(0., st.y) + 0.4 * step(0., st.y));
-    // color.rgb = mix(color.rgb, (COLOR_1).rgb + 0.005, color.a * 0.);
-    // color = blend(vec4((COLOR_2).rgb, 0.005*(1.-gradient(abs(st.y), 0.0, 0.1))), color);
-
     return color;
 }
 
@@ -154,8 +148,6 @@ void main() {
     vec2 stC = (st - CENTER_COMP);
     float noiseT = random(st + vec2(u_time * 0.01, 0.0));
     vec4 c = generateScene(stC, u_time, 0.85 + noiseT * 0.15);
-    // vec4 wave = color(wave(stC, 0.3, 0.8), COLOR_5);
-    // gl_FragColor = wave;
     c.rgb *= 0.95 + noiseT * 0.05;
     gl_FragColor = c;
 }
