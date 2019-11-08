@@ -130,14 +130,20 @@ vec4 generateScene(vec2 st, float time, float noiseT) {
     s = triangleWithMoon(st, 20.0 * t * t * t * t);
     vec4 shape4 = blend(color(s.y, COLOR_3), color(s.x, COLOR_5));
 
+    vec4 h = color(hLine, COLOR_1);
+    h.a = hLine * 0.3;
     vec4 color = blend(shape, bgd);
     color = blend(shape2, color);
     color = blend(shape3, color);
     color = blend(shape4, color);
 
-    color.rgb = mix((COLOR_1).rgb + 0.02 * noise, color.rgb, 1.0 - gradient(st.y, - 0.9, 0.0) + 1.0 * gradient(st.y, 0.0, 0.9));
+    vec4 gradient = vec4((COLOR_1).rgb + 0.02 * noise, 1.0 - gradient(abs(st.y), 0.0, 0.9));
+    gradient.a = 0.8 * mix(0.7, gradient.a, step(0.0, - (st.y)));
+    color = blend(gradient, color);
+    color = blend(h, color);
+    // color.rgb = mix(, color.rgb, 1.0 - gradient(st.y, - 0.9, 0.0) + 1.0 * gradient(st.y, 0.0, 0.9));
     // color.rgb = mix((COLOR_1).rgb, color.rgb, 1. - step(0., st.y) + 0.4 * step(0., st.y));
-    color.rgb = mix(color.rgb, (COLOR_1).rgb + 0.005, color.a * hLine), color.a * hLine;
+    // color.rgb = mix(color.rgb, (COLOR_1).rgb + 0.005, color.a * 0.);
     // color = blend(vec4((COLOR_2).rgb, 0.005*(1.-gradient(abs(st.y), 0.0, 0.1))), color);
 
     return color;
