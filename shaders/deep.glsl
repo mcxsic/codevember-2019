@@ -24,7 +24,7 @@ float stroke(float x, float s, float w) {
 }
 
 float fill(float x, float s) {
-    return 1. - smoothstep(s - SMOOTH, s + SMOOTH, x);
+    return 1.0 - smoothstep(s - SMOOTH, s + SMOOTH, x);
 }
 
 float gradient(float x, float stop1, float stop2) {
@@ -46,7 +46,7 @@ vec2 normalizedCoordinates(vec2 pixelCoord, vec2 resolution) {
 
 float triSDF(vec2 st) {
     st = st * 2.0;
-    return max(abs(st.x) * 0.866025 + st.y * 0.5,abs(st.x) * 0.866025 - st.y * 0.5);
+    return max(abs(st.x) * 0.866025 + st.y * 0.5, abs(st.x) * 0.866025 - st.y * 0.5);
 }
 
 float triangle(vec2 st, float size) {
@@ -55,7 +55,7 @@ float triangle(vec2 st, float size) {
 
 vec4 color(float mask, vec4 color) {
     float srcAlpha = mask * color.a;
-    return vec4(mix(vec3(0.), color.rgb, srcAlpha), srcAlpha);
+    return vec4(mix(vec3(0.0), color.rgb, srcAlpha), srcAlpha);
 }
 
 vec4 blend(vec4 src, vec4 dst) {
@@ -72,11 +72,13 @@ void main() {
     vec2 stC = (st - CENTER_COMP);
     vec4 bgd = COLOR_1;
 
-    float mask = stroke(stC.y, 0.0, 0.03);
-    vec4 shape = color(triangle(stC, 1.2), COLOR_3);
-
+    float hLine = stroke(stC.y, 0.0, 0.01);
+    vec4 shape = color(triangle(stC, 0.8), COLOR_3);
 
     vec4 color = blend(shape, bgd);
-    gl_FragColor.rgb = mix(color.rgb, (COLOR_2).rgb, color.a * mask), color.a * mask;
-    gl_FragColor.a = 1.;
+
+    color.rgb = mix((COLOR_1).rgb, color.rgb, 1.0 - gradient(stC.y, - 0.6, 0.0) + gradient(stC.y, 0.0, 1.9));
+    color.rgb = mix(color.rgb, (COLOR_2).rgb, color.a * hLine), color.a * hLine;
+    gl_FragColor.rgb = color.rgb;
+    gl_FragColor.a = 1.0;
 }
