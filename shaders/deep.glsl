@@ -1,5 +1,5 @@
 // Author: mcxsic
-// Title: Geometric (codevember 2019)
+// Title: Deep (codevember 2019)
 
 #ifdef GL_ES
 precision mediump float;
