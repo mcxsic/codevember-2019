@@ -13,7 +13,7 @@ precision mediump float;
 #define COLOR_4 vec4(39.0, 55.0, 63.0, 255.0) / 255.0
 #define COLOR_5 vec4(57.0, 34.0, 64.0, 255.0) / 255.0
 #define COLOR_6 vec4(12.0, 11.0, 14.0, 255.0) / 255.0
-#define SMOOTH 0.002
+#define SMOOTH 0.005
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
@@ -22,6 +22,15 @@ uniform sampler2D u_buffer0;
 
 mat2 rotate2d(in float angle) {
     return mat2(cos(angle), - sin(angle), sin(angle), cos(angle));
+}
+
+float fill(float x, float s) {
+    return 1.0 - smoothstep(s - SMOOTH, s + SMOOTH, x);
+}
+
+float stroke(float x, float s, float w) {
+    float d = smoothstep(s - SMOOTH, s + SMOOTH, x + w * 0.5) - smoothstep(s - SMOOTH, s + SMOOTH, x - w * 0.5);
+    return clamp(d, 0.0, 1.0);
 }
 
 // The Book Of Shaders implementation (https://thebookofshaders.com/11/)
@@ -78,24 +87,6 @@ vec4 blend(vec4 src, vec4 dst) {
     return vec4(mix(dst.rgb, src.rgb, src.a), src.a + dst.a * (1.0 - src.a));
 }
 
-// Function by Iñigo Quilez (https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm)
-float sdTriangle(in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2) {
-    vec2 e0 = p1 - p0, e1 = p2 - p1, e2 = p0 - p2;
-    vec2 v0 = p - p0, v1 = p - p1, v2 = p - p2;
-    vec2 pq0 = v0 - e0 * clamp(dot(v0, e0) / dot(e0, e0), 0.0, 1.0);
-    vec2 pq1 = v1 - e1 * clamp(dot(v1, e1) / dot(e1, e1), 0.0, 1.0);
-    vec2 pq2 = v2 - e2 * clamp(dot(v2, e2) / dot(e2, e2), 0.0, 1.0);
-    float s = sign(e0.x * e2.y - e0.y * e2.x);
-    vec2 d = min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y * e0.x)),
-    vec2(dot(pq1, pq1), s * (v1.x * e1.y - v1.y * e1.x))),
-    vec2(dot(pq2, pq2), s * (v2.x * e2.y - v2.y * e2.x)));
-    return - sqrt(d.x) * sign(d.y);
-}
-
-// Function by Iñigo Quilez (https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm)
-float sdRoundedTriangle(in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2, in float r) {
-    return sdTriangle(p, p0, p1, p2) - r;
-}
 #if defined(BUFFER_0)
 
 void main() {
@@ -116,6 +107,24 @@ void main() {
 
 #else
 
+float hornSDF(vec2 st) {
+    st = st * 2.0;
+    return max(abs(st.x) * 1.866025 + st.y * 0.5, abs(st.x) * 0.866025 - st.y * 0.5);
+}
+
+float triSDF(vec2 st) {
+    st = st * 2.0;
+    return max(abs(st.x) * 0.966025 + st.y * 0.5, abs(st.x) * 0.966025 - st.y * 0.5);
+}
+
+float triangle(vec2 st, float size) {
+    return fill(triSDF(st), size);
+}
+
+float horn(vec2 st, float size) {
+    return fill(hornSDF(st), size);
+}
+
 void main() {
     vec2 st = normalizedCoordinates(gl_FragCoord.xy, u_resolution);
     vec4 noise = texture2D(u_buffer0, gl_FragCoord.xy / u_resolution.xy);
@@ -127,12 +136,25 @@ void main() {
     color = blend(vec4((COLOR_1).rgb, layer3), color);
     color = blend(vec4((COLOR_2).rgb, layer2), color);
     color = blend(vec4((COLOR_3).rgb, layer1), color);
-    float dithering = random(st * 1.0 + u_time * vec2(0.01, 0.0));
-    color.rgb *= 0.95 + dithering * 0.05;
+
     vec2 stT = st;
-    // stT *= rotate2d(PI/2.);
-    float t = 1.-step(0.012, sdRoundedTriangle(stT * 1.7, vec2(-0.8,-1.7), vec2(-0.8, -1.3), vec2(-0.3, -1.35), 0.4));
-    color = blend(vec4((COLOR_6).rgb, t), color);
+    float dithering = random(st * 1.0 + u_time * vec2(0.01, 0.0));
+    stT += vec2(0.65, -1.4);
+    stT *= rotate2d(-PI / 7.0);
+
+    float t = horn(stT, 0.5) + triangle(stT + vec2(0.0, 0.9), 0.3);
+    stT = st;
+
+    stT *= rotate2d(PI / 2.7);
+    t += 0.4 * stroke(stT.x, 1.15, 0.05);
+
+    stT = st;
+    stT *= rotate2d(PI / 1.6);
+    t = min(t + 0.4 * stroke(stT.x, 0.9, 0.05), 1.0);
+
+    color = blend(vec4((COLOR_6).rgb, (0.95 + dithering * 0.05) * t * 0.89), color);
+
+    color.rgb *= 0.95 + dithering * 0.05;
     gl_FragColor = color;
 }
 
