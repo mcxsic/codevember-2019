@@ -5,6 +5,8 @@ const settings = {
     backgroundColor: '#27373F',
     primaryColor: '#466A82',
     secondaryColor: '#1a1a1a',
+    width: 1080,
+    height: 2220,
     frameColor: '#263D45',
 };
 export default settings;
